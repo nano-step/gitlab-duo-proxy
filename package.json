@@ -4,9 +4,9 @@
   "description": "Proxy server translating Anthropic Messages API to GitLab Duo",
   "type": "module",
   "scripts": {
-    "dev": "tsx src/server.ts",
+    "dev": "tsx --env-file=.env src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node --env-file=.env dist/server.js"
   },
   "dependencies": {
     "gitlab-ai-provider": "^5.0.0",

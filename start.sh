@@ -13,7 +13,7 @@ is_running() {
 
 start_proxy() {
   cd "$PROXY_DIR" || exit 1
-  setsid npx tsx src/server.ts > "$LOG_FILE" 2>&1 &
+  setsid npx tsx --env-file=.env src/server.ts > "$LOG_FILE" 2>&1 &
   disown $! 2>/dev/null
   echo $! > "$PID_FILE"
   for i in 1 2 3 4 5; do
