@@ -4,4 +4,6 @@ dist/
 *.log
 .proxy.pid
 .proxy.log
+.proxy-error.log
+.proxy-out.log
 package-lock.json
