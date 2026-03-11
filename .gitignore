@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+*.log
+.proxy.pid
+.proxy.log
+package-lock.json

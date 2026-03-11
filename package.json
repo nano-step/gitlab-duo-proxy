@@ -1,0 +1,22 @@
+{
+  "name": "gitlab-duo-proxy",
+  "version": "1.0.0",
+  "description": "Proxy server translating Anthropic Messages API to GitLab Duo",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "gitlab-ai-provider": "^5.0.0",
+    "ai": "^6.0.116",
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
