@@ -4,6 +4,8 @@ import { streamText } from 'ai'
 import { mapModel, getAvailableModels, getAliases, DUO_MODELS } from './models.js'
 import { translateMessages, extractSystem, type AnthropicRequest } from './translate.js'
 import { streamToAnthropicSSE } from './stream.js'
+import { translateOpenAIRequest, type OpenAIRequest } from './openai-translate.js'
+import { streamToOpenAISSE, generateOpenAIResponse } from './openai-stream.js'
 
 const app = express()
 app.use(express.json({ limit: '50mb' }))
@@ -85,6 +87,54 @@ app.post('/v1/messages', async (req, res) => {
     log(`Error: ${message}`)
     if (!res.headersSent) {
       sendError(res, 500, message)
+    }
+  }
+})
+
+app.post('/v1/chat/completions', async (req, res) => {
+  const token = extractToken(req)
+  if (!token) {
+    res.status(401).json({ error: { message: 'Missing GitLab token', type: 'invalid_request_error' } })
+    return
+  }
+
+  const body = req.body as OpenAIRequest
+  if (!body.messages || !Array.isArray(body.messages)) {
+    res.status(400).json({ error: { message: 'messages array required', type: 'invalid_request_error' } })
+    return
+  }
+
+  const requestedModel = body.model || 'sonnet'
+  const duoModel = mapModel(requestedModel)
+
+  try {
+    const gitlab = createGitLab({ apiKey: token, instanceUrl: GITLAB_INSTANCE_URL })
+    const { system, messages } = translateOpenAIRequest(body)
+
+    const result = streamText({
+      model: gitlab(duoModel),
+      messages,
+      system,
+      maxOutputTokens: body.max_tokens,
+      temperature: body.temperature,
+    })
+
+    if (body.stream === false) {
+      const completion = await generateOpenAIResponse(result, requestedModel)
+      res.json(completion)
+      return
+    }
+
+    res.setHeader('Content-Type', 'text/event-stream')
+    res.setHeader('Cache-Control', 'no-cache')
+    res.setHeader('Connection', 'keep-alive')
+
+    await streamToOpenAISSE(res, result, requestedModel)
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    log(`Error: ${message}`)
+    if (!res.headersSent) {
+      res.status(500).json({ error: { message, type: 'api_error' } })
     }
   }
 })
