@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "gitlab-duo-proxy",
       script: "npx",
-      args: "tsx src/server.ts",
+      args: "tsx --env-file=.env src/server.ts",
       cwd: __dirname,
       env: {
         NODE_ENV: "production",
