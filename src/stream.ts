@@ -22,6 +22,30 @@ function writeSSE(res: Response, event: string, data: unknown): void {
   res.write(`data: ${JSON.stringify(data)}\n\n`)
 }
 
+export async function generateAnthropicResponse(
+  stream: Awaited<ReturnType<typeof import('ai').streamText>>,
+  model: string,
+): Promise<object> {
+  const messageId = generateId()
+  let fullText = ''
+  let outputTokens = 0
+
+  for await (const chunk of stream.textStream) {
+    fullText += chunk
+    outputTokens += Math.ceil(chunk.length / 4)
+  }
+
+  return {
+    id: messageId,
+    type: 'message',
+    role: 'assistant',
+    content: [{ type: 'text', text: fullText }],
+    model,
+    stop_reason: 'end_turn',
+    usage: { input_tokens: 0, output_tokens: outputTokens },
+  }
+}
+
 export async function streamToAnthropicSSE(
   res: Response,
   stream: Awaited<ReturnType<typeof import('ai').streamText>>,
