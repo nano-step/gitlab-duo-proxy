@@ -38,6 +38,12 @@ const ALIAS_MAP: Record<string, string> = {
   'claude-haiku-4.5': 'duo-chat-haiku-4-5',
   'haiku-4-5': 'duo-chat-haiku-4-5',
   'haiku': 'duo-chat-haiku-4-5',
+  // Exact Anthropic model IDs (sent by Claude Code / Shannon)
+  'claude-haiku-4-5-20251001': 'duo-chat-haiku-4-5',
+  'claude-sonnet-4-5-20250929': 'duo-chat-sonnet-4-5',
+  'claude-opus-4-5-20251101': 'duo-chat-opus-4-5',
+  'claude-sonnet-4-20250514': 'duo-chat-sonnet-4-6',
+  'claude-opus-4-20250512': 'duo-chat-opus-4-6',
   // OpenAI aliases
   'gpt-5.1': 'duo-chat-gpt-5-1',
   'gpt-5-1': 'duo-chat-gpt-5-1',
